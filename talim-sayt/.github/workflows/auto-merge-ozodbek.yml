@@ -1,0 +1,57 @@
+# Auto-merge ozodbek branch into main on every push.
+# After merge is pushed to main, Vercel auto-deploys.
+name: Auto-merge ozodbek -> main
+
+# Trigger only on direct pushes to the ozodbek branch.
+on:
+  push:
+    branches:
+      - ozodbek
+
+# Need write access to push the merge commit to main.
+permissions:
+  contents: write
+
+# Prevent overlapping runs (queued pushes would otherwise race on main).
+concurrency:
+  group: auto-merge-ozodbek
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      # Full history is required so the merge has all commits available.
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      # Identify the merge commits as the github-actions bot.
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Make sure we have the latest main locally.
+      - name: Fetch main
+        run: git fetch origin main
+
+      # Switch to a local main tracking origin/main.
+      - name: Checkout main
+        run: git checkout -B main origin/main
+
+      # Merge ozodbek into main; prefer ozodbek's version on conflicts
+      # (ozodbek is the source of truth for the frontend).
+      # If a structural conflict still can't be auto-resolved, the step
+      # fails and the workflow surfaces the error in GitHub.
+      - name: Merge ozodbek into main
+        run: |
+          git merge --no-ff -X theirs origin/ozodbek \
+            -m "auto-merge: ozodbek -> main"
+
+      # Push the merge commit so Vercel picks it up and deploys.
+      - name: Push main
+        run: git push origin main

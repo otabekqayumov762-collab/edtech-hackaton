@@ -1,8 +1,8 @@
 # Frontend
-ta'lim-sayt/node_modules/
-ta'lim-sayt/dist/
-ta'lim-sayt/.vercel/
-ta'lim-sayt/.claude/
+talim-sayt/node_modules/
+talim-sayt/dist/
+talim-sayt/.vercel/
+talim-sayt/.claude/
 
 # Backend
 mf-platform-backend/__pycache__/

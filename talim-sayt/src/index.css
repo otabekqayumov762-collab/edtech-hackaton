@@ -1,0 +1,400 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Manrope', 'Plus Jakarta Sans', 'Inter', ui-sans-serif, sans-serif;
+  --font-heavy: 'Archivo Black', 'Manrope', 'Inter', ui-sans-serif, sans-serif;
+
+  /* Brand — deep navy blue (matches M badge top accent) */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #3b82f6;
+  --color-brand-500: #1d4ed8;
+  --color-brand-600: #1e3a8a;
+  --color-brand-700: #172554;
+  --color-brand-800: #0f172a;
+  --color-brand-900: #0b1220;
+  --color-brand-950: #050816;
+
+  /* Ilova sirtlar — light theme uchun oq/och kulrang */
+  --color-ink-950: #f8fafc;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #f5f7fa;
+  --color-ink-800: #ffffff;
+  --color-ink-700: #e2e8f0;
+  --color-ink-600: #cbd5e1;
+  --color-ink-500: #94a3b8;
+
+  --color-gold: #fbbf24;
+  --color-fire: #f59e0b;
+  --color-grass: #16a34a;
+  --color-sky-accent: #0284c7;
+  --color-rose-accent: #e11d48;
+
+  --radius-4xl: 1.5rem;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--tilt, 0deg)); }
+}
+@keyframes underline-draw {
+  0% { transform: scaleX(0); transform-origin: left; }
+  60% { transform: scaleX(1); transform-origin: left; }
+  61% { transform-origin: right; }
+  100% { transform: scaleX(1); transform-origin: right; }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(31,41,55,0.45); }
+  70% { box-shadow: 0 0 0 14px rgba(31,41,55,0); }
+  100% { box-shadow: 0 0 0 0 rgba(31,41,55,0); }
+}
+
+/* ============ Ambient hero background — slow drifting blobs ============ */
+@keyframes blob-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -20px) scale(1.05); }
+  66%      { transform: translate(-20px, 30px) scale(0.95); }
+}
+@keyframes blob-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(-30px, 20px) scale(0.95); }
+  66%      { transform: translate(20px, -25px) scale(1.05); }
+}
+@keyframes blob-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(25px, 25px) scale(1.05); }
+  66%      { transform: translate(-25px, -15px) scale(0.95); }
+}
+.animate-blob   { animation: blob-a 22s ease-in-out infinite; will-change: transform; }
+.animate-blob-2 { animation: blob-b 26s ease-in-out infinite; will-change: transform; }
+.animate-blob-3 { animation: blob-c 30s ease-in-out infinite; will-change: transform; }
+
+/* Infinite marquee (testimonial slider) */
+@keyframes marquee-x {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-x 40s linear infinite;
+  width: max-content;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* Horizontal scroll snap (feature scroller) */
+.h-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.h-scroll::-webkit-scrollbar { display: none; }
+.h-scroll > * { scroll-snap-align: start; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob,
+  .animate-blob-2,
+  .animate-blob-3 { animation: none; }
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: var(--font-sans);
+    margin: 0;
+    background: #f8fafc;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 9999px; }
+  .app-shell ::-webkit-scrollbar-thumb { background: var(--color-ink-700); }
+
+  /* Input focus — ko'k outline/ring yo'q (auth va boshqa formalar) */
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    outline: none;
+  }
+  input:focus, input:focus-visible,
+  select:focus, select:focus-visible,
+  textarea:focus, textarea:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  a[href],
+  button:not(:disabled),
+  [role='button'],
+  [role='link'],
+  input[type='button']:not(:disabled),
+  input[type='submit']:not(:disabled),
+  input[type='reset']:not(:disabled) {
+    cursor: pointer;
+  }
+  button:disabled,
+  input[type='button']:disabled,
+  input[type='submit']:disabled,
+  input[type='reset']:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .float-y { animation: float-y 7s ease-in-out infinite; }
+
+  .hover-lift { transition: transform .25s ease, box-shadow .25s ease; }
+  .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.12); }
+  .press-scale { transition: transform .12s ease; }
+  .press-scale:active { transform: scale(.97); }
+  .smooth-bar { transition: width .6s cubic-bezier(.22,1,.36,1); }
+  .glow-success { box-shadow: 0 0 0 2px rgba(34,197,94,.35), 0 0 24px rgba(34,197,94,.25); }
+  .glow-error { box-shadow: 0 0 0 2px rgba(225,29,72,.45), 0 0 22px rgba(225,29,72,.3); }
+  @keyframes shake-x {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-6px)}
+    40%{transform:translateX(5px)}
+    60%{transform:translateX(-3px)}
+    80%{transform:translateX(3px)}
+  }
+  .anim-shake { animation: shake-x .4s ease both; }
+  @keyframes pop-in {
+    0% { transform: scale(.6); opacity:0 }
+    70% { transform: scale(1.08); opacity:1 }
+    100% { transform: scale(1); opacity:1 }
+  }
+  .anim-pop { animation: pop-in .35s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes fly-up {
+    0% { transform:translateY(0); opacity:1 }
+    100% { transform:translateY(-60px); opacity:0 }
+  }
+  .anim-fly-up { animation: fly-up .7s ease-out both; }
+
+  /* Safe page transition — yengil fade, flicker yo'q */
+  @keyframes page-fade {
+    from { opacity: 0.92; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page-fade-in { animation: page-fade .15s ease-out both; }
+
+  /* ============ RESPONSIVE FIX — iPhone 4 (320px) → desktop ============ */
+  @media (max-width: 380px) {
+    h1, h2 { word-break: break-word; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 15px; }
+    .px-5 { padding-left: 16px; padding-right: 16px; }
+  }
+  img, svg, video { max-width: 100%; height: auto; }
+  html, body { overflow-x: hidden; }
+
+  @media (max-width: 425px) {
+    .marketing-header {
+      border-bottom: 1px solid #e4e4e7;
+    }
+  }
+
+  /* Phone mockup ichidagi pastki nav'da matnlarni truncate qiladi */
+  .phone-mockup-root .text-\[8px\],
+  .phone-mockup-root .text-\[9px\],
+  .phone-mockup-root .text-\[10px\] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  @media (max-width: 380px) {
+    .phone-mockup-root {
+      width: min(220px, calc(100vw - 2rem));
+    }
+    .phone-mockup-screen {
+      font-size: 0.92em;
+    }
+  }
+}
+
+/* ============ Light theme app override (applied to <body> by default) ============ */
+body.theme-light,
+.theme-light {
+  --color-ink-950: #f5f5f7;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #fafafa;
+  --color-ink-800: #ffffff;
+  --color-ink-700: #e4e4e7;
+  --color-ink-600: #d4d4d8;
+  --color-ink-500: #71717a;
+}
+.theme-light.app-shell { background: #f5f5f7; color: #18181b; }
+
+/* Ilova UI va telefon maketi — matnni tanlash / nusxalash o‘chirilgan */
+.app-shell,
+.app-shell *,
+.phone-mockup-screen,
+.phone-mockup-screen * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.app-shell input,
+.app-shell textarea,
+.app-shell select,
+.app-shell [contenteditable='true'],
+.app-shell .select-text,
+.phone-mockup-screen input,
+.phone-mockup-screen textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* Fan mavzu/dars kartochkalari — yengil, tez hover (ko‘p tugmada blur/transform yo‘q) */
+.topic-card-btn {
+  border-color: color-mix(in srgb, var(--topic-accent) 22%, var(--color-ink-700));
+  contain: layout style;
+}
+@media (hover: hover) {
+  .topic-card-btn {
+    transition:
+      border-color 0.1s linear,
+      background-color 0.1s linear;
+  }
+  .topic-card-btn:hover {
+    border-color: var(--topic-accent);
+    background-color: color-mix(in srgb, var(--topic-accent) 12%, var(--color-ink-800));
+  }
+  .topic-card-btn:hover .topic-card-title {
+    color: var(--topic-accent);
+  }
+  .topic-card-btn:hover .topic-card-sub {
+    color: color-mix(in srgb, var(--topic-accent) 70%, transparent);
+  }
+  .topic-card-btn:hover .topic-card-arrow {
+    border-color: color-mix(in srgb, var(--topic-accent) 45%, transparent);
+    background-color: color-mix(in srgb, var(--topic-accent) 16%, var(--color-ink-950));
+    color: var(--topic-accent);
+  }
+}
+.topic-card-btn:active {
+  background-color: color-mix(in srgb, var(--topic-accent) 18%, var(--color-ink-800));
+}
+.topic-card-accent-bar {
+  background: color-mix(in srgb, var(--topic-accent) 35%, transparent);
+}
+@media (hover: hover) {
+  .topic-card-btn:hover .topic-card-accent-bar {
+    background: var(--topic-accent);
+  }
+}
+
+/* Recharts — bosilganda focus ring va active border yo'q */
+.recharts-no-focus .recharts-wrapper,
+.recharts-no-focus .recharts-responsive-container,
+.recharts-no-focus .recharts-surface,
+.recharts-no-focus .recharts-sector,
+.recharts-no-focus .recharts-pie-sector,
+.recharts-no-focus .recharts-bar-rectangle,
+.recharts-no-focus .recharts-area,
+.recharts-no-focus .recharts-area-area,
+.recharts-no-focus .recharts-area-curve,
+.recharts-no-focus .recharts-curve,
+.recharts-no-focus .recharts-layer,
+.recharts-no-focus *:focus,
+.recharts-no-focus *:focus-visible {
+  outline: none !important;
+}
+.theme-light .text-white { color: #18181b; }
+.theme-light .text-white\/90 { color: rgba(15, 23, 42, 0.9); }
+.theme-light .text-white\/85 { color: rgba(15, 23, 42, 0.85); }
+.theme-light .text-white\/80 { color: rgba(15, 23, 42, 0.8); }
+.theme-light .text-white\/75 { color: rgba(15, 23, 42, 0.75); }
+.theme-light .text-white\/70 { color: rgba(15, 23, 42, 0.7); }
+.theme-light .text-white\/65 { color: rgba(15, 23, 42, 0.65); }
+.theme-light .text-white\/60 { color: rgba(15, 23, 42, 0.62); }
+.theme-light .text-white\/55 { color: rgba(15, 23, 42, 0.58); }
+.theme-light .text-white\/50 { color: rgba(15, 23, 42, 0.55); }
+.theme-light .text-white\/45 { color: rgba(15, 23, 42, 0.55); }
+.theme-light .text-white\/40 { color: rgba(15, 23, 42, 0.5); }
+.theme-light .text-white\/35 { color: rgba(15, 23, 42, 0.5); }
+.theme-light .text-white\/30 { color: rgba(15, 23, 42, 0.45); }
+.theme-light .text-white\/25 { color: rgba(15, 23, 42, 0.4); }
+.theme-light .text-white\/20 { color: rgba(15, 23, 42, 0.35); }
+.theme-light .text-white\/15 { color: rgba(15, 23, 42, 0.3); }
+.theme-light .text-white\/10 { color: rgba(15, 23, 42, 0.25); }
+
+/* Surface dividers and subtle bg overrides */
+.theme-light .bg-ink-950\/85 { background: rgba(255, 255, 255, 0.92) !important; }
+.theme-light .bg-ink-950\/95 { background: rgba(255, 255, 255, 0.95) !important; }
+.theme-light .border-ink-800 { border-color: #e4e4e7; }
+.theme-light .border-ink-700 { border-color: #e4e4e7; }
+.theme-light .border-ink-600 { border-color: #d4d4d8; }
+.theme-light .ring-white\/30 { --tw-ring-color: rgba(15, 23, 42, 0.15); }
+
+/* Backdrop blur surfaces */
+.theme-light [class*="backdrop-blur"] { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.theme-light .bg-ink-800\/80 { background: rgba(255, 255, 255, 0.92) !important; }
+.theme-light .bg-ink-900\/50 { background: rgba(245, 245, 247, 0.6) !important; }
+.theme-light .bg-ink-900\/60 { background: rgba(245, 245, 247, 0.7) !important; }
+
+/* === Restore white text on dark/brand backgrounds (theme-light flips text-white to dark) === */
+.theme-light .bg-brand-500 .text-white,
+.theme-light .bg-brand-500.text-white,
+.theme-light .bg-brand-600 .text-white,
+.theme-light .bg-brand-600.text-white,
+.theme-light .bg-brand-700 .text-white,
+.theme-light .bg-brand-700.text-white,
+.theme-light .bg-brand-800 .text-white,
+.theme-light .bg-brand-800.text-white,
+.theme-light .bg-slate-900 .text-white,
+.theme-light .bg-slate-900.text-white,
+.theme-light .bg-slate-800 .text-white,
+.theme-light .bg-slate-800.text-white,
+.theme-light .bg-grass .text-white,
+.theme-light .bg-grass.text-white,
+.theme-light .bg-rose-accent .text-white,
+.theme-light .bg-rose-accent.text-white,
+.theme-light .bg-fire .text-white,
+.theme-light .bg-fire.text-white,
+.theme-light [data-on-dark] .text-white,
+.theme-light .on-dark .text-white,
+.theme-light .on-dark.text-white { color: #ffffff !important; }
+
+/* And the white-with-alpha variants */
+.theme-light .bg-brand-500 .text-white\/90,
+.theme-light .bg-brand-600 .text-white\/90,
+.theme-light .bg-brand-700 .text-white\/90,
+.theme-light .bg-brand-800 .text-white\/90,
+.theme-light .bg-slate-900 .text-white\/90,
+.theme-light .bg-grass .text-white\/90,
+.theme-light .bg-rose-accent .text-white\/90 { color: rgba(255, 255, 255, 0.9) !important; }
+.theme-light .bg-brand-500 .text-white\/80,
+.theme-light .bg-brand-600 .text-white\/80,
+.theme-light .bg-brand-700 .text-white\/80,
+.theme-light .bg-brand-800 .text-white\/80,
+.theme-light .bg-slate-900 .text-white\/80 { color: rgba(255, 255, 255, 0.8) !important; }
+.theme-light .bg-brand-500 .text-white\/70,
+.theme-light .bg-brand-600 .text-white\/70,
+.theme-light .bg-brand-700 .text-white\/70,
+.theme-light .bg-brand-800 .text-white\/70,
+.theme-light .bg-slate-900 .text-white\/70 { color: rgba(255, 255, 255, 0.7) !important; }
+.theme-light .bg-brand-500 .text-white\/60,
+.theme-light .bg-brand-600 .text-white\/60,
+.theme-light .bg-brand-700 .text-white\/60,
+.theme-light .bg-brand-800 .text-white\/60 { color: rgba(255, 255, 255, 0.6) !important; }
+.theme-light .bg-brand-500 .text-white\/50,
+.theme-light .bg-brand-600 .text-white\/50,
+.theme-light .bg-brand-700 .text-white\/50,
+.theme-light .bg-brand-800 .text-white\/50 { color: rgba(255, 255, 255, 0.5) !important; }

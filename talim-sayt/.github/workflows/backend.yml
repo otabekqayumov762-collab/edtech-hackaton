@@ -1,0 +1,64 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: mfplatform
+          POSTGRES_USER: mfuser
+          POSTGRES_PASSWORD: mfpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mfuser -d mfplatform"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_HOST: localhost
+      DB_NAME: mfplatform
+      DB_USER: mfuser
+      DB_PASSWORD: mfpass
+      DB_PORT: 5432
+      SECRET_KEY: ci-test
+      DEBUG: 'False'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend requirements
+        run: pip install -r backend/requirements.txt
+
+      - name: Run migrations
+        run: python backend/manage.py migrate --noinput
+
+      - name: Run pytest
+        run: |
+          if [ -f backend/pytest.ini ] || [ -f backend/pyproject.toml ] || [ -f backend/setup.cfg ]; then
+            cd backend && pytest -x
+          else
+            echo "pytest is not configured in backend/; skipping."
+          fi
