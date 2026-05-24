@@ -1,0 +1,31 @@
+# Keep the build context small and free of secrets / local junk.
+
+# VCS
+.git
+.gitignore
+
+# Python virtualenvs and bytecode
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Local secrets / databases
+.env
+.env.*
+!.env.example
+db.sqlite3
+db.sqlite3-journal
+
+# Generated artifacts
+staticfiles
+media
+
+# Editor / IDE
+.vscode
+.idea
+*.swp
+.DS_Store

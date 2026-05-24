@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: mf_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-mfplatform}
+      POSTGRES_USER: ${DB_USER:-mfuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-mfpass}
+    ports:
+      - "5434:5432"
+    volumes:
+      - mf_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-mfuser} -d ${DB_NAME:-mfplatform}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # Django + DRF backend (gunicorn behind WhiteNoise).
+  # Build context is this directory; the Dockerfile lives next to docker-compose.yml.
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: mf_web
+    env_file:
+      - .env
+    environment:
+      # Override DB_HOST so the container talks to the "db" service, not localhost.
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source for dev convenience (hot edits visible after gunicorn restart).
+      # Remove these two mounts for an immutable production deployment.
+      - ./:/app
+      - mf_static:/app/staticfiles
+      - mf_media:/app/media
+    restart: unless-stopped
+
+volumes:
+  mf_pg_data:
+  mf_static:
+  mf_media:

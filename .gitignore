@@ -1,0 +1,19 @@
+# Frontend
+ta'lim-sayt/node_modules/
+ta'lim-sayt/dist/
+ta'lim-sayt/.vercel/
+ta'lim-sayt/.claude/
+
+# Backend
+mf-platform-backend/__pycache__/
+mf-platform-backend/**/__pycache__/
+mf-platform-backend/*.pyc
+mf-platform-backend/.venv/
+mf-platform-backend/db.sqlite3
+mf-platform-backend/staticfiles/
+mf-platform-backend/media/
+mf-platform-backend/.env
+
+# Common
+*.log
+.DS_Store
